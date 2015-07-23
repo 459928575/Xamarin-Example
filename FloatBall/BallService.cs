@@ -12,6 +12,7 @@ using Android.Widget;
 using Android.Graphics.Drawables;
 using Android.Graphics.Drawables.Shapes;
 using Android.Views.Animations;
+using Android.Graphics;
 
 namespace FloatBall {
     [Service]
@@ -25,6 +26,7 @@ namespace FloatBall {
 
         private IWindowManager WindowManager {
             get {
+                //不是简单的类型转换，一定要用 JavaCast
                 return this.GetSystemService(Context.WindowService).JavaCast<IWindowManager>();
             }
         }
@@ -34,9 +36,10 @@ namespace FloatBall {
             var rotat = new RotateAnimation(0f, 360f, Dimension.RelativeToSelf, 0.5f, Dimension.RelativeToSelf, 0.5f);
             rotat.RepeatMode = RepeatMode.Reverse;
             rotat.Duration = 500;
-            rotat.AnimationStart += Ani_AnimationStart;
-            rotat.AnimationEnd += Ani_AnimationEnd;
+            //rotat.AnimationStart += Ani_AnimationStart;
+            //rotat.AnimationEnd += Ani_AnimationEnd;
             rotat.FillBefore = true;
+            //AccelerateDecelerateInterpolator  先加速后减速
             rotat.Interpolator = new AccelerateDecelerateInterpolator();
             this.AniSet.AddAnimation(rotat);
         }
@@ -67,6 +70,7 @@ namespace FloatBall {
                 //System.Diagnostics.Debug.WriteLine("======>RawX : {0} RawY :{1} Width:{2} Height:{3} X:{4} Y:{5}", e.RawX, e.RawY, v.MeasuredWidth, v.MeasuredHeight, parm.X, parm.Y);
                 this.WindowManager.UpdateViewLayout(v, parm);
             }
+            // true 和 false 有啥区别？
             return false;
         }
 
@@ -80,10 +84,14 @@ namespace FloatBall {
         private void CreateBallView() {
             this.FV = new FrameLayout(this);
             var shape = new OvalShape();
-            this.FV.Background = new ShapeDrawable(shape);
+            var dr = new ShapeDrawable(shape);
+            dr.Paint.Color = Color.WhiteSmoke;
+            dr.Paint.Alpha = 100;
+            this.FV.Background = dr;
+
+            //不懂如何裁剪。
             //this.FV.SetClipChildren(true);
             //this.FV.SetClipToPadding(true);
-
 
 
             this.FV.SetOnTouchListener(this);
@@ -91,16 +99,19 @@ namespace FloatBall {
 
             var img = new ImageView(this);
             img.SetImageResource(Resource.Drawable.Icon);
-            this.Img = img;
+            this.Img = img;//动画对 FreameLayout 不起作用
 
             this.FV.AddView(img);
             var param = new WindowManagerLayoutParams();
             param.Width = WindowManagerLayoutParams.WrapContent;
             param.Height = WindowManagerLayoutParams.WrapContent;
-            param.Gravity = GravityFlags.Top | GravityFlags.Left;////////
+
+            //我理解这个东西应该是 原点， 如果设置成其它值， 拖动的时候位置会有错。
+            param.Gravity = GravityFlags.Top | GravityFlags.Left;
             param.Flags = WindowManagerFlags.NotFocusable;
 
-            param.Type = WindowManagerTypes.Phone;//Must
+            //必须设置， 不然会在 WindowManager.AddView 的时候报错。
+            param.Type = WindowManagerTypes.Phone;
             param.Format = Android.Graphics.Format.Transparent;
 
             this.WindowManager.AddView(this.FV, param);
@@ -112,6 +123,7 @@ namespace FloatBall {
             if (disposing && this.FV != null) {
                 this.WindowManager.RemoveView(this.FV);
                 this.FV.Dispose();
+                this.Img.Dispose();
             }
         }
     }
