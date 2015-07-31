@@ -18,122 +18,11 @@ using AO = Android.OS;
 using System.Net.Http;
 
 namespace FlipView {
-    public abstract class DiskLRUCache {
+    public class DiskLRUCache {
 
-        private readonly static IsolatedStorageFile ISF = null;
+        private static readonly IsolatedStorageFile ISF = IsolatedStorageFile.GetUserStoreForApplication();
 
-        /// <summary>
-        /// 是否缓存，默认开启
-        /// </summary>
-        public bool EnableCache { get; set; }
-
-        /// <summary>
-        /// 缓存时长, 默认1天
-        /// </summary>
-        public TimeSpan CacheValidity { get; set; }
-
-        public abstract string SubDir { get; }
-
-        static DiskLRUCache() {
-            ISF = IsolatedStorageFile.GetUserStoreForApplication();
-        }
-
-        private void CheckPath() {
-            if (!ISF.DirectoryExists(this.SubDir)) {
-                ISF.CreateDirectory(this.SubDir);
-            }
-        }
-
-        public DiskLRUCache() {
-            this.CacheValidity = TimeSpan.FromDays(1);
-            this.EnableCache = true;
-
-            this.CheckPath();
-        }
-
-        public async Task<Stream> GetStream(string url) {
-            var uri = new Uri(url);
-            return await this.GetStream(uri);
-        }
-
-        /// <summary>
-        /// 获取文件流
-        /// </summary>
-        /// <param name="uri"></param>
-        /// <returns></returns>
-        public async Task<Stream> GetStream(Uri uri) {
-            Stream stm = null;
-            if (!this.EnableCache) {
-                stm = await this.GetStreamAsync(uri);
-            } else {
-                var key = MD5(uri.AbsoluteUri);
-                stm = await this.GetStreamFromCache(key);
-                if (stm == null || stm.Length == 0) {
-                    stm = await this.GetStreamAsync(uri);
-                    if (stm != null) {
-                        await this.SaveCache(key, stm);
-                    }
-                }
-            }
-
-            return stm;
-        }
-
-        /// <summary>
-        /// 从网络获取文件流
-        /// </summary>
-        /// <param name="uri"></param>
-        /// <returns></returns>
-        private async Task<Stream> GetStreamAsync(System.Uri uri) {
-            Stream stream = null;
-            using (var client = new HttpClient())
-            using (var rep = await client.GetAsync(uri)) {
-                stream = await rep.Content.ReadAsStreamAsync();
-            }
-            return stream;
-        }
-
-        /// <summary>
-        /// 从缓存获取文件流
-        /// </summary>
-        /// <param name="uri"></param>
-        /// <returns></returns>
-        private async Task<Stream> GetStreamFromCache(string key) {
-            Stream stm = null;
-            var path = Path.Combine(this.SubDir, key);
-            if (!await this.IsExpire(path)) {
-                stm = ISF.OpenFile(path, FileMode.Open, FileAccess.Read);
-            }
-            return stm;
-        }
-
-        /// <summary>
-        /// 是否过期, 如果不存在，按过期处理
-        /// </summary>
-        /// <param name="path"></param>
-        /// <returns></returns>
-        private Task<bool> IsExpire(string path) {
-            //如果文件不存在， 直接是过期处理
-            if (!ISF.FileExists(path))
-                return Task.FromResult(true);
-
-            var offset = ISF.GetLastWriteTime(path);
-            return Task.FromResult(DateTime.Now - offset > this.CacheValidity);
-        }
-
-        /// <summary>
-        /// 保存缓存
-        /// </summary>
-        /// <param name="key"></param>
-        /// <param name="stm"></param>
-        /// <returns></returns>
-        private Task SaveCache(string key, Stream stm) {
-            var path = Path.Combine(this.SubDir, key);
-            //IOException Sharing violation on path
-            using (var f = ISF.OpenFile(path, FileMode.Create, FileAccess.Write)) {
-                return stm.CopyToAsync(f);
-            }
-        }
+        private string SubDir = null;
 
         private static string MD5(string input) {
             using (var md5Hasher = System.Security.Cryptography.MD5.Create()) {
@@ -147,5 +36,38 @@ namespace FlipView {
             }
         }
 
+        private string GetPath(string file) {
+            return Path.Combine(this.SubDir, MD5(file));
+        }
+
+        public Task<Stream> GetStream(string file) {
+            var path = this.GetPath(file);
+
+            if (ISF.FileExists(path)) {
+                var stm = ISF.OpenFile(path, FileMode.Open, FileAccess.Read);
+                return Task.FromResult<Stream>(stm);
+            }
+            return Task.FromResult<Stream>(null);
+        }
+
+        public async Task WriteStream(string file, Stream stm) {
+            var path = this.GetPath(file);
+
+            try {
+                using (var fs = ISF.OpenFile(path, FileMode.OpenOrCreate, FileAccess.Write)) {
+                    //await stm.CopyToAsync(fs); 如果不指定 buff size , 会报错
+                    await stm.CopyToAsync(fs, 16384);
+                }
+            } catch {
+
+            }
+        }
+
+        public DiskLRUCache(string subDir) {
+            this.SubDir = subDir;
+            if (!ISF.DirectoryExists(subDir)) {
+                ISF.CreateDirectory(subDir);
+            }
+        }
     }
 }
