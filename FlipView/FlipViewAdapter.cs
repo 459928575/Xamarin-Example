@@ -62,21 +62,23 @@ namespace FlipView {
         }
 
         public override void DestroyItem(ViewGroup container, int position, Java.Lang.Object objectValue) {
-            var vp = (ViewPager)container;
-            var chd = container.GetChildAt(position);
-            chd.Dispose();
+            //var vp = (ViewPager)container;
+            //var chd = container.GetChildAt(position);
+            //不能 Dispose, 如果释放了,会在 FinishUpdate 的时候, 报错
+            //chd.Dispose();
         }
 
         public override void FinishUpdate(ViewGroup container) {
             var vp = container as ViewPager;
             var pos = vp.CurrentItem;
+
             if (pos == 0) {
                 pos = this.Items.Count();/////////////
             } else if (pos == this.Count - 1) {
                 pos = this.Items.Count() - 1;///////////////
             }
-
-            vp.SetCurrentItem(pos, true);
+            System.Diagnostics.Debug.WriteLine("====> pos {0}", pos);
+            vp.SetCurrentItem(pos, false);
         }
     }
 }
