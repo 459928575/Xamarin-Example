@@ -56,6 +56,7 @@ namespace FlipView {
             var bm = await this.Source.GetBitmap(src);
             if (bm != null) {
                 img.SetImageBitmap(bm);
+                img.SetScaleType(ImageView.ScaleType.FitXy);
                 bm.Dispose();
             }
         }
@@ -71,11 +72,11 @@ namespace FlipView {
             var pos = vp.CurrentItem;
             if (pos == 0) {
                 pos = this.Items.Count();/////////////
-                vp.SetCurrentItem(pos, false);
             } else if (pos == this.Count - 1) {
                 pos = this.Items.Count() - 1;///////////////
-                vp.SetCurrentItem(pos, false);
             }
+
+            vp.SetCurrentItem(pos, true);
         }
     }
 }

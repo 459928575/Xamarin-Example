@@ -18,7 +18,7 @@ using AO = Android.OS;
 using System.Net.Http;
 
 namespace FlipView {
-    public class DiskLRUCache {
+    public class DiskCache {
 
         private static readonly IsolatedStorageFile ISF = IsolatedStorageFile.GetUserStoreForApplication();
 
@@ -63,7 +63,7 @@ namespace FlipView {
             }
         }
 
-        public DiskLRUCache(string subDir) {
+        public DiskCache(string subDir) {
             this.SubDir = subDir;
             if (!ISF.DirectoryExists(subDir)) {
                 ISF.CreateDirectory(subDir);

@@ -28,7 +28,7 @@ namespace FlipView {
             }
         }
 
-        private DiskLRUCache Cache = null;
+        private DiskCache Cache = null;
 
         public bool EnableCache { get; set; }
 
@@ -37,7 +37,7 @@ namespace FlipView {
         public UriImageSource() {
             this.EnableCache = true;
             this.CacheTime = TimeSpan.FromDays(1);
-            this.Cache = new DiskLRUCache(this.SubDir);
+            this.Cache = new DiskCache(this.SubDir);
         }
 
         public async Task<Drawable> GetDrable(string url) {
@@ -70,9 +70,13 @@ namespace FlipView {
 
         private async Task<Stream> GetStreamFromWeb(string url) {
             Stream stream = null;
-            using (var client = new HttpClient())
-            using (var rep = await client.GetAsync(url)) {
-                stream = await rep.Content.ReadAsStreamAsync();
+            try {
+                using (var client = new HttpClient())
+                using (var rep = await client.GetAsync(url)) {
+                    stream = await rep.Content.ReadAsStreamAsync();
+                }
+            } catch {
+
             }
             return stream;
         }

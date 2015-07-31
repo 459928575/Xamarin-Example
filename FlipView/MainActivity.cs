@@ -28,7 +28,7 @@ namespace FlipView {
 
             var vp = new ViewPager(this);
             vp.Adapter = new FlipViewAdapter(this, this.Imgs);
-            this.AddContentView(vp, new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MatchParent, 300));
+            this.AddContentView(vp, new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MatchParent, 400));
         }
     }
 }
