@@ -24,9 +24,22 @@ namespace DiscMenu {
 
         protected override void OnLayout(bool changed, int l, int t, int r, int b) {
 
+            float sAng = 0;
+            var ang = 360 / this.ChildCount;
+            var w = Math.Min(this.MeasuredWidth, this.MeasuredHeight);
+
             for (var i = 0; i < this.ChildCount; i++) {
+                sAng %= 360;
+                var radians = this.ToRadians(sAng);
                 var c = this.GetChildAt(i);
-                c.Layout(l, t, c.MeasuredWidth, c.MeasuredHeight);
+
+                var tmp = (w - c.MeasuredWidth) / 2;
+                var left = w / 2 + (int)Math.Round(tmp * Math.Cos(radians) - c.MeasuredWidth / 2);
+                var top = w / 2 + (int)Math.Round(tmp * Math.Sin(radians) - c.MeasuredWidth / 2);
+
+                c.Layout(left, top, left + c.MeasuredWidth, top + c.MeasuredHeight);
+
+                sAng += ang;
             }
 
         }
@@ -34,15 +47,24 @@ namespace DiscMenu {
         protected override void OnMeasure(int widthMeasureSpec, int heightMeasureSpec) {
             base.OnMeasure(widthMeasureSpec, heightMeasureSpec);
 
+            var w = MeasureSpec.GetSize(widthMeasureSpec);
+            var h = MeasureSpec.GetSize(heightMeasureSpec);
+            var r = Math.Min(w, h);
+
             for (var i = 0; i < this.ChildCount; i++) {
                 var c = this.GetChildAt(i);
-                //var t = MeasureSpec.MakeMeasureSpec(1 / 4, MeasureSpecMode.Exactly);
-                c.Measure( widthMeasureSpec, heightMeasureSpec );
+                var t = MeasureSpec.MakeMeasureSpec((int)(0.25 * r), MeasureSpecMode.Exactly);
+                c.Measure(t, t);
             }
         }
 
-        protected override void MeasureChild(View child, int parentWidthMeasureSpec, int parentHeightMeasureSpec) {
-            base.MeasureChild(child, parentWidthMeasureSpec, parentHeightMeasureSpec);
+        /// <summary>
+        /// 度数转为弧度
+        /// </summary>
+        /// <param name="degree"></param>
+        /// <returns></returns>
+        private double ToRadians(float degree) {
+            return degree / 180f * Math.PI;
         }
     }
 }
