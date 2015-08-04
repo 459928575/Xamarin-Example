@@ -16,7 +16,7 @@ namespace DiscMenu {
             base.OnCreate(bundle);
 
             var discView = new DiscMenu(this);
-            this.AddContentView(discView, new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MatchParent, ViewGroup.LayoutParams.MatchParent));
+            this.AddContentView(discView, new ViewGroup.LayoutParams(400, 400));
 
             var btn1 = new Button(this) {
                 Text = "aaaa"

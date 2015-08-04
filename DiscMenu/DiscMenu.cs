@@ -62,21 +62,24 @@ namespace DiscMenu {
         protected override void OnDraw(Canvas canvas) {
             base.OnDraw(canvas);
 
-            var w = Math.Min(canvas.Width, canvas.Height) / 2;
+            //var w = Math.Min(canvas.Width, canvas.Height) / 2;
+            var w = Math.Min(this.Width, this.Height) / 2;
             var paint = new Paint() {
                 Color = Color.White,
                 Alpha = 180,
                 AntiAlias = true
             };
-            //canvas.DrawCircle(w, w, w, paint);
 
             var p = new Path();
             p.AddCircle(w, w, w, Path.Direction.Cw);//±ÕºÏ
             var p2 = new Path();
             p2.AddCircle(w, w, w / 2, Path.Direction.Cw);
+            var p3 = new Path();
+            p3.AddCircle(w, w, w / 3, Path.Direction.Cw);
 
             canvas.ClipPath(p);
             canvas.ClipPath(p2, Region.Op.Difference);
+            canvas.ClipPath(p3, Region.Op.Union);
             canvas.DrawPath(p, paint);
         }
 
