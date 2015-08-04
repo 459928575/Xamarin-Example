@@ -18,24 +18,25 @@ namespace DiscMenu {
     public class DiscMenu : ViewGroup {
 
         public DiscMenu(Context ctx) : base(ctx) {
-            //var dv = new DiscView(ctx);
-            //this.AddView(dv, LayoutParams.MatchParent, LayoutParams.MatchParent);
+            //使 OnDraw 可被调用
+            this.SetWillNotDraw(false);
         }
 
         protected override void OnLayout(bool changed, int l, int t, int r, int b) {
 
             float sAng = 0;
             var ang = 360 / this.ChildCount;
-            var w = Math.Min(this.MeasuredWidth, this.MeasuredHeight);
+            var w = Math.Min(this.MeasuredWidth, this.MeasuredHeight) / 2;
 
             for (var i = 0; i < this.ChildCount; i++) {
                 sAng %= 360;
                 var radians = this.ToRadians(sAng);
                 var c = this.GetChildAt(i);
+                var cw = c.MeasuredWidth / 2;
 
-                var tmp = (w - c.MeasuredWidth) / 2;
-                var left = w / 2 + (int)Math.Round(tmp * Math.Cos(radians) - c.MeasuredWidth / 2);
-                var top = w / 2 + (int)Math.Round(tmp * Math.Sin(radians) - c.MeasuredWidth / 2);
+                var tmp = (w - cw);
+                var left = w + (int)Math.Round(tmp * Math.Cos(radians) - cw);
+                var top = w + (int)Math.Round(tmp * Math.Sin(radians) - cw);
 
                 c.Layout(left, top, left + c.MeasuredWidth, top + c.MeasuredHeight);
 
@@ -57,6 +58,28 @@ namespace DiscMenu {
                 c.Measure(t, t);
             }
         }
+
+        protected override void OnDraw(Canvas canvas) {
+            base.OnDraw(canvas);
+
+            var w = Math.Min(canvas.Width, canvas.Height) / 2;
+            var paint = new Paint() {
+                Color = Color.White,
+                Alpha = 180,
+                AntiAlias = true
+            };
+            //canvas.DrawCircle(w, w, w, paint);
+
+            var p = new Path();
+            p.AddCircle(w, w, w, Path.Direction.Cw);//闭合
+            var p2 = new Path();
+            p2.AddCircle(w, w, w / 2, Path.Direction.Cw);
+
+            canvas.ClipPath(p);
+            canvas.ClipPath(p2, Region.Op.Difference);
+            canvas.DrawPath(p, paint);
+        }
+
 
         /// <summary>
         /// 度数转为弧度
