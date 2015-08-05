@@ -20,14 +20,17 @@ namespace DiscMenu {
     public class DiscMenu : ViewGroup, View.IOnTouchListener {
 
         private static readonly string CENTER_TAG = "C";
+        private static readonly int CENTER_RADIUS = 50;
 
         private bool Explanded = false;
+
 
         public DiscMenu(Context ctx, Bitmap centerBmp) : base(ctx) {
             //使 OnDraw 可被调用
             this.SetWillNotDraw(false);
 
-            var c = new CenterView(ctx, centerBmp);
+            var c = new CenterView(ctx, centerBmp, CENTER_RADIUS);
+            c.ShowType = CenterView.ShowTypes.Inner;
             c.Tag = CENTER_TAG;
             c.Click += C_Click;
             this.AddViewInLayout(c, 0, new LayoutParams(LayoutParams.MatchParent, LayoutParams.MatchParent));
@@ -92,7 +95,7 @@ namespace DiscMenu {
 
             if (!this.Explanded) {
                 var path = new Path();
-                path.AddCircle(cx, cy, 50, Path.Direction.Cw);
+                path.AddCircle(cx, cy, CENTER_RADIUS, Path.Direction.Cw);
                 canvas.ClipPath(path);
             } else {
 
@@ -106,6 +109,9 @@ namespace DiscMenu {
                     Background = kv.Value,
                     Tag = kv.Key
                 };
+                //var btn = new CenterView(this.Context, (kv.Value as BitmapDrawable).Bitmap, 40) {
+                //    Tag = kv.Key
+                //};
                 btn.Click += Btn_Click;
                 this.AddView(btn);
             }

@@ -23,11 +23,51 @@ namespace DiscMenu {
         private Bitmap Center = null;
         private int Degree = 0;
 
+        /// <summary>
+        /// 旋转步长
+        /// </summary>
         private static readonly int DEGREE_STEP = 3;
 
-        private int R1 = 0, R2 = 0;
+        /// <summary>
+        /// 圆环宽
+        /// </summary>
+        private static readonly int RING_WIDTH = 10;
 
-        public CenterView(Context ctx, Bitmap center) : base(ctx) {
+        /// <summary>
+        /// 圆环与线之前的空间
+        /// </summary>
+        private static readonly int SPACE = 10;
+
+        /// <summary>
+        /// 图片半径
+        /// </summary>
+        public int BitmapRadius { get; private set; }
+
+        /// <summary>
+        /// 半径
+        /// </summary>
+        public int Radius {
+            get;
+            private set;
+        }
+
+
+        /// <summary>
+        /// 外切长宽
+        /// </summary>
+        public int OWH { get; private set; }
+
+        /// <summary>
+        /// 内接长宽
+        /// </summary>
+        public int IWH { get; private set; }
+
+        /// <summary>
+        /// 图片是内接还是外切
+        /// </summary>
+        public ShowTypes ShowType { get; set; }
+
+        public CenterView(Context ctx, Bitmap center, int radius) : base(ctx) {
             //不加这一句， Draw 的内容在 VS Emulator 里不显示。在 Android 自带的模拟器里正常。
             this.Holder.SetFormat(Format.Transparent);
 
@@ -38,15 +78,19 @@ namespace DiscMenu {
 
             this.Center = center;
 
-            this.R1 = (int)(15 * this.Context.Resources.DisplayMetrics.Density);
-            this.R2 = (int)System.Math.Sqrt(System.Math.Pow(R1, 2) * 2) - 2;
+            //解析度
+            var density = this.Context.Resources.DisplayMetrics.Density;
+
+            this.BitmapRadius = radius - (SPACE + RING_WIDTH) / 2;
+            this.Radius = radius;
+            this.OWH = (int)(radius * 2 * density);
+            this.IWH = (int)(System.Math.Sqrt(System.Math.Pow(radius, 2) * 2) * density);
         }
 
         private void Draw() {
             try {
                 using (var canvas = this.Holder.LockCanvas()) {
                     if (canvas != null) {
-                        //this.DrawCenter(canvas);
                         this.DrawBitmap(canvas, this.Center);
                         this.DrawRing(canvas);
                     }
@@ -58,24 +102,30 @@ namespace DiscMenu {
 
         private void DrawBitmap(Canvas c, Bitmap bmp) {
             var sc = c.Save();
-            //每 100 毫秒转度一个角度
-            //if (DateTime.Now.Ticks % 2 == 0) {
+
             this.Degree = this.Degree % 360 + DEGREE_STEP;
-            //}
             //要先旋转，后画图才有效果
             c.Rotate(this.Degree, c.Width / 2, c.Height / 2);
 
-            var paint = new Paint();
+            //中心点
             var cx = c.Width / 2;
             var cy = c.Height / 2;
 
+            //限定显示范围, 指定半径的圆
             var path = new Path();
-            path.AddCircle(cx, cy, R2, Path.Direction.Cw);
+            path.AddCircle(cx, cy, this.BitmapRadius, Path.Direction.Cw);
             c.ClipPath(path);
             c.DrawColor(Color.White);
 
-            var rect = new Rect(cx - R1, cy - R1, cx + R1, cy + R1);
+            //图片的绘制范围
+            var w = (this.ShowType == ShowTypes.Inner ? this.IWH : this.OWH) / 2;
+            var rect = new Rect(cx - w, cy - w, cx + w, cy + w);
+
+            //绘制图片
+            var paint = new Paint();
+            //src为null, 将把整个图片做为源
             c.DrawBitmap(bmp, null, rect, paint);
+
             c.RestoreToCount(sc);
         }
 
@@ -84,13 +134,15 @@ namespace DiscMenu {
 
             c.Rotate(-this.Degree, c.Width / 2, c.Height / 2);
 
+            //中心点
             var cx = c.Width / 2;
             var cy = c.Height / 2;
 
+            //用两个圆 Path 构造一个 圆环显示区域, 即挖空内圆
             var pInner = new Path();
-            pInner.AddCircle(cx, cy, this.R2 + 5, Path.Direction.Cw);
+            pInner.AddCircle(cx, cy, this.BitmapRadius + SPACE / 2, Path.Direction.Cw);
             var pOut = new Path();
-            pOut.AddCircle(cx, cy, this.R2 + 10, Path.Direction.Cw);
+            pOut.AddCircle(cx, cy, this.Radius, Path.Direction.Cw);
 
             c.ClipPath(pOut);
             c.ClipPath(pInner, Region.Op.Difference);
@@ -98,10 +150,11 @@ namespace DiscMenu {
             //var color = new Color((int)(DateTime.Now.Ticks % 0xFFFFFFFF));
             //c.DrawColor(color);
 
+            //用角度渐变填充外圆的范围
             var g = new SweepGradient(cx, cy, Color.Green, Color.Transparent);
             var paint = new Paint();
             paint.SetShader(g);
-            c.DrawCircle(cx, cy, this.R2 + 10, paint);
+            c.DrawCircle(cx, cy, this.Radius, paint);
 
             c.RestoreToCount(sc);
         }
@@ -161,6 +214,18 @@ namespace DiscMenu {
         }
 
         #endregion
+
+
+        public enum ShowTypes {
+            /// <summary>
+            /// 内接, 完整显示
+            /// </summary>
+            Inner,
+            /// <summary>
+            /// 外接, 边接不显示
+            /// </summary>
+            Out
+        }
 
     }
 }
