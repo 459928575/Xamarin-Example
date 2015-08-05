@@ -12,13 +12,15 @@ using Android.Graphics.Drawables;
 namespace DiscMenu {
     [Activity(Label = "DiscMenu", MainLauncher = true, Icon = "@drawable/icon")]
     public class MainActivity : Activity {
-
         protected override void OnCreate(Bundle bundle) {
             base.OnCreate(bundle);
 
+            var layout = new RelativeLayout(this);
+            this.AddContentView(layout, new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MatchParent, ViewGroup.LayoutParams.MatchParent));
 
-            var menu = new DiscMenu(this, BitmapFactory.DecodeResource(this.Resources, Resource.Drawable.xling) );
-            this.AddContentView(menu, new ViewGroup.LayoutParams(400, 400));
+            var menu = new DiscMenu(this, BitmapFactory.DecodeResource(this.Resources, Resource.Drawable.xling));
+            //this.AddContentView(menu, new ViewGroup.LayoutParams(400, 400));
+            layout.AddView(menu, 400, 400);
             menu.SetMenus(new Dictionary<string, Drawable>() {
                 {"Add", this.Resources.GetDrawable(Resource.Drawable.add) },
                 {"Call", this.Resources.GetDrawable( Resource.Drawable.call) },

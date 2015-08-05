@@ -17,17 +17,27 @@ namespace DiscMenu {
     /// <summary>
     /// http://blog.csdn.net/lmj623565791/article/details/43131133
     /// </summary>
-    public class DiscMenu : ViewGroup {
+    public class DiscMenu : ViewGroup, View.IOnTouchListener {
 
-        private static readonly string CenterTag = "C";
+        private static readonly string CENTER_TAG = "C";
+
+        private bool Explanded = false;
 
         public DiscMenu(Context ctx, Bitmap centerBmp) : base(ctx) {
             //使 OnDraw 可被调用
-            //this.SetWillNotDraw(false);
+            this.SetWillNotDraw(false);
 
             var c = new CenterView(ctx, centerBmp);
-            c.Tag = CenterTag;
+            c.Tag = CENTER_TAG;
+            c.Click += C_Click;
             this.AddViewInLayout(c, 0, new LayoutParams(LayoutParams.MatchParent, LayoutParams.MatchParent));
+
+            this.SetOnTouchListener(this);
+        }
+
+        private void C_Click(object sender, EventArgs e) {
+            this.Explanded = !this.Explanded;
+            this.Invalidate();
         }
 
         protected override void OnLayout(bool changed, int l, int t, int r, int b) {
@@ -38,7 +48,7 @@ namespace DiscMenu {
 
             for (var i = 0; i < this.ChildCount; i++) {
                 var c = this.GetChildAt(i);
-                if (c.Tag != null && c.Tag.Equals(CenterTag)) {
+                if (c.Tag != null && c.Tag.Equals(CENTER_TAG)) {
                     //如果不分配空间 SurfaceView 的 SurfaceCreated 事件不会执行
                     c.Layout(0, 0, this.MeasuredWidth, this.MeasuredHeight);
                 } else {
@@ -66,7 +76,7 @@ namespace DiscMenu {
 
             for (var i = 0; i < this.ChildCount; i++) {
                 var c = this.GetChildAt(i);
-                if (c.Tag != null && c.Tag.Equals(CenterTag))
+                if (c.Tag != null && c.Tag.Equals(CENTER_TAG))
                     continue;
 
                 var t = MeasureSpec.MakeMeasureSpec((int)(0.25 * r), MeasureSpecMode.Exactly);
@@ -77,34 +87,34 @@ namespace DiscMenu {
         protected override void OnDraw(Canvas canvas) {
             base.OnDraw(canvas);
 
-            //var w = Math.Min(this.Width, this.Height) / 2;
-            //var paint = new Paint() {
-            //    Color = Color.White,
-            //    //Alpha = 180,
-            //    AntiAlias = true
-            //};
+            var cx = this.MeasuredWidth / 2;
+            var cy = this.MeasuredHeight / 2;
 
-            //var p = new Path();
-            //p.AddCircle(w, w, w, Path.Direction.Cw);//闭合
-            //var p2 = new Path();
-            //p2.AddCircle(w, w, w / 2, Path.Direction.Cw);
-            //var p3 = new Path();
-            //p3.AddCircle(w, w, w / 3, Path.Direction.Cw);
+            if (!this.Explanded) {
+                var path = new Path();
+                path.AddCircle(cx, cy, 50, Path.Direction.Cw);
+                canvas.ClipPath(path);
+            } else {
 
-            //canvas.ClipPath(p);
-            //canvas.ClipPath(p2, Region.Op.Difference);
-            //canvas.ClipPath(p3, Region.Op.Union);
-            //canvas.DrawPath(p, paint);
+            }
         }
 
 
         public void SetMenus(Dictionary<string, Drawable> txtAndResIDs) {
             foreach (var kv in txtAndResIDs) {
-                var btn = new ImageView(this.Context) {
-                    Background = kv.Value
+                var btn = new ImageButton(this.Context) {
+                    Background = kv.Value,
+                    Tag = kv.Key
                 };
+                btn.Click += Btn_Click;
                 this.AddView(btn);
             }
+        }
+
+        private void Btn_Click(object sender, EventArgs e) {
+            var btn = sender as ImageButton;
+            var txt = (string)btn.Tag;
+            Toast.MakeText(this.Context, txt, ToastLength.Short).Show();
         }
 
         /// <summary>
@@ -114,6 +124,14 @@ namespace DiscMenu {
         /// <returns></returns>
         private double ToRadians(float degree) {
             return degree / 180f * Math.PI;
+        }
+
+        public bool OnTouch(View v, MotionEvent e) {
+            //var x = (int)e.RawX - v.MeasuredWidth / 2;
+            //var y = (int)e.RawY - v.MeasuredHeight / 2;
+            v.SetX(e.RawX);
+            v.SetY(e.RawY);
+            return false;
         }
     }
 }
