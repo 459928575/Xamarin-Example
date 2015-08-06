@@ -79,7 +79,7 @@ namespace DiscMenu {
             this.Center = center;
 
             //½âÎö¶È
-            var density = this.Context.Resources.DisplayMetrics.Density;
+            var density = 1;// this.Context.Resources.DisplayMetrics.Density;
 
             this.BitmapRadius = radius - (SPACE + RING_WIDTH) / 2;
             this.Radius = radius;
@@ -189,11 +189,19 @@ namespace DiscMenu {
             c.DrawCircle(x, y, 50, paint);
         }
 
+        public void Start() {
+            this.IsRunning = true;
+        }
+
+        public void Stop() {
+            this.IsRunning = false;
+        }
 
         #region IRunnable
         public void Run() {
-            while (this.IsRunning) {
-                this.Draw();
+            while (true) {
+                if (this.IsRunning)
+                    this.Draw();
             }
         }
         #endregion
