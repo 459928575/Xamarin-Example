@@ -68,6 +68,9 @@ namespace DiscMenu {
         public ShowTypes ShowType { get; set; }
 
         public CenterView(Context ctx, Bitmap center, int radius) : base(ctx) {
+            
+            //下面这两名合一起才能透明啊
+            this.SetZOrderOnTop(true);
             //不加这一句， Draw 的内容在 VS Emulator 里不显示。在 Android 自带的模拟器里正常。
             this.Holder.SetFormat(Format.Transparent);
 

@@ -56,10 +56,10 @@ namespace DiscMenu {
             this.Explanded = !this.Explanded;
 
             if (this.Explanded) {
-                c.Stop();
+                //c.Stop();
                 this.Expand();
             } else {
-                c.Start();
+                //c.Start();
                 this.Collopse();
             }
         }
@@ -89,11 +89,13 @@ namespace DiscMenu {
             var l = w + (int)Math.Round(tmp * Math.Cos(radians) - hw);
             var t = w + (int)Math.Round(tmp * Math.Sin(radians) - hw);
 
-            //var duration = new Random(1000).Next(200, 1000);
+            var duration = new Random(1000).Next(200, 1000);
 
             set = new AnimatorSet();
+            set.SetInterpolator(new Android.Views.Animations.BounceInterpolator());
             set.SetTarget(c);
-            set.SetDuration(500);
+            set.SetDuration(200 * idx + duration);
+            //set.SetDuration(200);
 
             float[] xs = new float[] { cx - hw, l };
             float[] ys = new float[] { cy - hy, t };
@@ -109,6 +111,11 @@ namespace DiscMenu {
             var aniSX = ObjectAnimator.OfFloat(c, "ScaleX", ss);
             var aniSY = ObjectAnimator.OfFloat(c, "ScaleY", ss);
 
+            aniX.SetAutoCancel(true);
+            aniY.SetAutoCancel(true);
+            aniSX.SetAutoCancel(true);
+            aniSY.SetAutoCancel(true);
+
             set.PlayTogether(aniX, aniY, aniSX, aniSY);
             set.AnimationEnd += Set_AnimationEnd;
 
@@ -118,7 +125,6 @@ namespace DiscMenu {
         private void Set_AnimationEnd(object sender, EventArgs e) {
             var ans = (AnimatorSet)sender;
             ans.Dispose();
-            //System.Diagnostics.Debug.WriteLine("AnimatorSet Dispose");
         }
 
         private View GetCanExpandCollopseChild(int idx) {
@@ -187,13 +193,14 @@ namespace DiscMenu {
             var w = MeasureSpec.GetSize(widthMeasureSpec);
             var h = MeasureSpec.GetSize(heightMeasureSpec);
             var r = Math.Min(w, h);
+            var size = (int)(0.25 * r);
 
             for (var i = 0; i < this.ChildCount; i++) {
                 var c = this.GetChildAt(i);
                 if (c.Tag != null && c.Tag.Equals(CENTER_TAG))
                     continue;
 
-                var t = MeasureSpec.MakeMeasureSpec((int)(0.25 * r), MeasureSpecMode.Exactly);
+                var t = MeasureSpec.MakeMeasureSpec(size, MeasureSpecMode.Exactly);
                 c.Measure(t, t);
             }
         }
