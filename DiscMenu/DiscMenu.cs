@@ -36,8 +36,6 @@ namespace DiscMenu {
         /// </summary>
         private bool Explanded = false;
 
-        private Dictionary<int, AnimatorSet> Anims = new Dictionary<int, AnimatorSet>();
-
 
         public DiscMenu(Context ctx, Bitmap centerBmp) : base(ctx) {
             //使 OnDraw 可被调用
@@ -76,48 +74,51 @@ namespace DiscMenu {
 
         private AnimatorSet GetAnimatorSet(int idx, bool expand) {
             AnimatorSet set = null;
-            if (!this.Anims.ContainsKey(idx)) {
-                var avgRadians = this.ToRadians(360 / (this.ChildCount - 1));
-                var w = Math.Min(this.MeasuredWidth, this.MeasuredHeight) / 2;
+            var avgRadians = this.ToRadians(360 / (this.ChildCount - 1));
+            var w = Math.Min(this.MeasuredWidth, this.MeasuredHeight) / 2;
 
-                var cx = this.MeasuredWidth / 2;
-                var cy = this.MeasuredHeight / 2;
+            var cx = this.MeasuredWidth / 2;
+            var cy = this.MeasuredHeight / 2;
 
-                var c = this.GetChildAt(idx);
-                var radians = idx * avgRadians;
-                var hw = c.MeasuredWidth / 2;
-                var hy = c.MeasuredHeight / 2;
+            var c = this.GetChildAt(idx);
+            var radians = idx * avgRadians;
+            var hw = c.MeasuredWidth / 2;
+            var hy = c.MeasuredHeight / 2;
 
-                var tmp = (w - hw);
-                var l = w + (int)Math.Round(tmp * Math.Cos(radians) - hw);
-                var t = w + (int)Math.Round(tmp * Math.Sin(radians) - hw);
+            var tmp = (w - hw);
+            var l = w + (int)Math.Round(tmp * Math.Cos(radians) - hw);
+            var t = w + (int)Math.Round(tmp * Math.Sin(radians) - hw);
 
-                //var duration = new Random(1000).Next(200, 1000);
+            //var duration = new Random(1000).Next(200, 1000);
 
-                set = new AnimatorSet();
-                set.SetTarget(c);
-                set.SetDuration(500);
+            set = new AnimatorSet();
+            set.SetTarget(c);
+            set.SetDuration(500);
 
-                float[] xs = new float[] { cx - hw, l };
-                float[] ys = new float[] { cy - hy, t };
-                float[] ss = new float[] { 0.1f, 1 };
-                if (!expand) {
-                    Array.Reverse(xs);
-                    Array.Reverse(ys);
-                    Array.Reverse(ss);
-                }
+            float[] xs = new float[] { cx - hw, l };
+            float[] ys = new float[] { cy - hy, t };
+            float[] ss = new float[] { 0.1f, 1 };
+            if (!expand) {
+                Array.Reverse(xs);
+                Array.Reverse(ys);
+                Array.Reverse(ss);
+            }
 
-                var aniX = ObjectAnimator.OfFloat(c, "X", xs);
-                var aniY = ObjectAnimator.OfFloat(c, "Y", ys);
-                var aniSX = ObjectAnimator.OfFloat(c, "ScaleX", ss);
-                var aniSY = ObjectAnimator.OfFloat(c, "ScaleY", ss);
+            var aniX = ObjectAnimator.OfFloat(c, "X", xs);
+            var aniY = ObjectAnimator.OfFloat(c, "Y", ys);
+            var aniSX = ObjectAnimator.OfFloat(c, "ScaleX", ss);
+            var aniSY = ObjectAnimator.OfFloat(c, "ScaleY", ss);
 
-                set.PlayTogether(aniX, aniY, aniSX, aniSY);
-                //this.Anims[idx] = set;
-            } else
-                set = this.Anims[idx];
+            set.PlayTogether(aniX, aniY, aniSX, aniSY);
+            set.AnimationEnd += Set_AnimationEnd;
 
             return set;
+        }
+
+        private void Set_AnimationEnd(object sender, EventArgs e) {
+            var ans = (AnimatorSet)sender;
+            ans.Dispose();
+            //System.Diagnostics.Debug.WriteLine("AnimatorSet Dispose");
         }
 
         private View GetCanExpandCollopseChild(int idx) {
@@ -224,21 +225,25 @@ namespace DiscMenu {
         }
 
         public bool OnTouch(View v, MotionEvent e) {
-            //var x = (int)e.RawX - v.MeasuredWidth / 2;
-            //var y = (int)e.RawY - v.MeasuredHeight / 2;
-            v.SetX(e.RawX);
-            v.SetY(e.RawY);
+            //这里不会执行，因为 Center 设置了 Click 事件
             return false;
         }
+
+        //public override bool DispatchTouchEvent(MotionEvent e) {
+        //    var x = e.RawX - this.Left;
+        //    var y = e.RawY - this.Top;
+
+        //    this.SetX(x);
+        //    this.SetY(y);
+        //    return base.DispatchTouchEvent(e);
+        //}
 
 
         protected override void Dispose(bool disposing) {
             base.Dispose(disposing);
 
             if (disposing) {
-                foreach (var s in this.Anims.Values) {
-                    s.Dispose();
-                }
+
             }
         }
 
