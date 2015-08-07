@@ -28,6 +28,14 @@ namespace Search {
         private void Btn_Click(object sender, EventArgs e) {
             this.OnSearchRequested();
         }
+
+        //搜索时，传送额外数据
+        //public override bool OnSearchRequested() {
+        //    var bundle = new Bundle();
+        //    bundle.PutBoolean("Key1", true);
+        //    this.StartSearch(null, false, bundle, false);
+        //    return true;
+        //}
     }
 }
 

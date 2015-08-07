@@ -70,6 +70,12 @@ namespace Search {
                 if (this.T1 != null) {
                     this.T1.Text = query;
                 }
+
+                var bundle = intent.GetBundleExtra(SearchManager.AppData);
+                if (bundle != null) {
+                    var key1 = bundle.GetBoolean("Key1");
+                    var key2 = bundle.GetBoolean("Key2");
+                }
             }
         }
     }
