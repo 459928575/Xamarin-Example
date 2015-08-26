@@ -38,6 +38,9 @@ namespace CMTest.ViewModels {
 
         private int I = 0;
 
+
+        private Screen VM1, VM2;
+
         public Screen VM {
             get;
             set;
@@ -46,15 +49,18 @@ namespace CMTest.ViewModels {
 
 
         public UserInfoViewModel() {
+            this.VM1 = new ControlViewModel();
+            this.VM2 = new StringViewModel();
+
             this.ChangeVM();
         }
 
         private void ChangeVM() {
             Task.Delay(2000)
                 .ContinueWith(t => {
-                    this.VM = this.I++ % 2 == 0 ? (Screen)new ControlViewModel() : new StringViewModel() {
-                        Ctx = this.I.ToString()
-                    };
+                    this.VM = this.I++ % 2 == 0 ? this.VM1 : this.VM2;
+                    ((StringViewModel)this.VM2).Ctx = this.I.ToString();
+
                     this.NotifyOfPropertyChange(() => this.VM);
                 })
             .ContinueWith(t => {
