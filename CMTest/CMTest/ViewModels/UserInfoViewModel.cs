@@ -25,8 +25,41 @@ namespace CMTest.ViewModels {
             set;
         }
 
+        private string _tag = "aaa";
+        public string Tag {
+            get {
+                return this._tag;
+            }
+            set {
+                this.Tag = value;
+            }
+        }
+
+
+        private int I = 0;
+
+        public Screen VM {
+            get;
+            set;
+        }
+
+
+
         public UserInfoViewModel() {
-        
+            this.ChangeVM();
+        }
+
+        private void ChangeVM() {
+            Task.Delay(2000)
+                .ContinueWith(t => {
+                    this.VM = this.I++ % 2 == 0 ? (Screen)new ControlViewModel() : new StringViewModel() {
+                        Ctx = this.I.ToString()
+                    };
+                    this.NotifyOfPropertyChange(() => this.VM);
+                })
+            .ContinueWith(t => {
+                ChangeVM();
+            });
         }
     }
 }
