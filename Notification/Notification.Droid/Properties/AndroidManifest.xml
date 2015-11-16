@@ -1,0 +1,55 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android" android:installLocation="auto" package="notification.Droid">
+  <uses-sdk android:minSdkVersion="17" />
+  <application android:icon="@drawable/icon">
+    <!-- Required SDK 核心功能-->
+    <!-- option since 2.0.5 可配置PushService，DaemonService,PushReceiver,AlarmReceiver的android:process参数 将JPush相关组件设置为一个独立进程 -->
+    <!-- 如：android:process=":remote" -->
+    <service android:name="cn.jpush.android.service.PushService" android:enabled="true" android:exported="false">
+      <intent-filter>
+        <action android:name="cn.jpush.android.intent.REGISTER" />
+        <action android:name="cn.jpush.android.intent.REPORT" />
+        <action android:name="cn.jpush.android.intent.PushService" />
+        <action android:name="cn.jpush.android.intent.PUSH_TIME" />
+      </intent-filter>
+    </service>
+    <!-- since 1.8.0 option 可选项。用于同一设备中不同应用的JPush服务相互拉起的功能。 -->
+    <!-- 若不启用该功能可删除该组件，将不拉起其他应用也不能被其他应用拉起 -->
+    <service android:name="cn.jpush.android.service.DaemonService" android:enabled="true" android:exported="true">
+      <intent-filter>
+        <action android:name="cn.jpush.android.intent.DaemonService" />
+        <category android:name="notification.Droid" />
+      </intent-filter>
+    </service>
+    <!-- Required -->
+    <receiver android:name="cn.jpush.android.service.PushReceiver" android:enabled="true">
+      <intent-filter android:priority="1000">
+        <action android:name="cn.jpush.android.intent.NOTIFICATION_RECEIVED_PROXY" />
+        <category android:name="notification.Droid" />
+      </intent-filter>
+      <intent-filter>
+        <action android:name="android.intent.action.USER_PRESENT" />
+        <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />
+      </intent-filter>
+      <!-- Optional -->
+      <intent-filter>
+        <action android:name="android.intent.action.PACKAGE_ADDED" />
+        <action android:name="android.intent.action.PACKAGE_REMOVED" />
+        <data android:scheme="package" />
+      </intent-filter>
+    </receiver>
+    <!-- Required SDK核心功能-->
+    <activity android:name="cn.jpush.android.ui.PushActivity" android:configChanges="orientation|keyboardHidden" android:exported="false">
+      <intent-filter>
+        <action android:name="cn.jpush.android.ui.PushActivity" />
+        <category android:name="android.intent.category.DEFAULT" />
+        <category android:name="notification.Droid" />
+      </intent-filter>
+    </activity>
+    <!-- Required SDK核心功能-->
+    <service android:name="cn.jpush.android.service.DownloadService" android:enabled="true" android:exported="false"></service>
+
+    <!-- Required SDK核心功能-->
+    <receiver android:name="cn.jpush.android.service.AlarmReceiver" />
+  </application>
+</manifest>

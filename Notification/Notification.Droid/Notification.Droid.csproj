@@ -97,7 +97,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ApplicationWithJPush.cs" />
+    <Compile Include="JPushApplication.cs" />
     <Compile Include="MainActivity.cs" />
     <Compile Include="Receiver.cs" />
     <Compile Include="Resources\Resource.Designer.cs" />
