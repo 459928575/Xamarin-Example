@@ -38,6 +38,12 @@
     <Reference Include="System.Core" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Additions\AlarmReceiver.cs" />
+    <Compile Include="Additions\DaemonService.cs" />
+    <Compile Include="Additions\DownloadService.cs" />
+    <Compile Include="Additions\PushActivity.cs" />
+    <Compile Include="Additions\PushReceiver.cs" />
+    <Compile Include="Additions\PushService.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
