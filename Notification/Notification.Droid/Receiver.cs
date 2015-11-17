@@ -35,6 +35,5 @@ namespace Notification.Droid {
             var bundle = intent.Extras;
             await ReceiverHandler.Handle(intent.Action, bundle);
         }
-
     }
 }

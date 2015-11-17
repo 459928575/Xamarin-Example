@@ -8,15 +8,20 @@ using Android.Widget;
 using Android.OS;
 using Notification.Droid.Services;
 using CN.Jpush.Android.Api;
+using Xamarin.Forms.Platform.Android;
 
 namespace Notification.Droid {
 
-    [Activity(Label = "Notification", Icon = "@drawable/icon", MainLauncher = true, ConfigurationChanges = ConfigChanges.ScreenSize | ConfigChanges.Orientation)]
-    public class MainActivity : global::Xamarin.Forms.Platform.Android.FormsApplicationActivity {
+    [Activity(Label = "Notification", Theme = "@style/MyTheme", Icon = "@drawable/icon", MainLauncher = true, ConfigurationChanges = ConfigChanges.ScreenSize | ConfigChanges.Orientation)]
+    public class MainActivity : FormsAppCompatActivity {
         protected override void OnCreate(Bundle bundle) {
             base.OnCreate(bundle);
 
             global::Xamarin.Forms.Forms.Init(this, bundle);
+
+            FormsAppCompatActivity.ToolbarResource = Resource.Layout.toolbar;
+            FormsAppCompatActivity.TabLayoutResource = Resource.Layout.tabs;
+
             LoadApplication(new App());
 
             JPushInterface.SetDebugMode(true);
