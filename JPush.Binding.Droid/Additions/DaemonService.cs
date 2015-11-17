@@ -15,7 +15,8 @@ namespace CN.Jpush.Android.Service {
     [Service(Name = "cn.jpush.android.service.DaemonService", Enabled = true, Exported = true)]
     [IntentFilter(
         new string[] { "cn.jpush.android.intent.DaemonService" },
-        Categories = new string[] { "notification.Droid" })
+        Categories = new string[] { Defines.APP_ID }
+        )
     ]
     public partial class DaemonService {
     }

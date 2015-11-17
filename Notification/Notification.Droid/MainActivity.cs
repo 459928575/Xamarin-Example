@@ -22,6 +22,18 @@ namespace Notification.Droid {
             JPushInterface.SetDebugMode(true);
             JPushInterface.Init(this);
         }
+
+        protected override void OnResume() {
+            base.OnResume();
+
+            JPushInterface.OnResume(this);
+        }
+
+        protected override void OnPause() {
+            base.OnPause();
+
+            JPushInterface.OnPause(this);
+        }
     }
 }
 

@@ -20,7 +20,7 @@ namespace CN.Jpush.Android.UI {
         "cn.jpush.android.ui.PushActivity"
     }, Categories = new string[]{
         "android.intent.category.DEFAULT",
-        "notification.Droid"
+        Defines.APP_ID
     })]
     public partial class PushActivity {
 

@@ -32,5 +32,10 @@ namespace Notification.Droid {
     public class JPushApplication : Application {
         //notification.Droid must same as Package Name
         public const string JPUSH_MESSAGE_PERMISSION = "notification.Droid.permission.JPUSH_MESSAGE";
+
+
+        public JPushApplication(IntPtr javaReference, JniHandleOwnership transfer)
+            : base(javaReference, transfer) {
+        }
     }
 }

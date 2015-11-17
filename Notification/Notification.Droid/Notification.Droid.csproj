@@ -100,6 +100,12 @@
     <Compile Include="JPushApplication.cs" />
     <Compile Include="MainActivity.cs" />
     <Compile Include="Receiver.cs" />
+    <Compile Include="ReceiverHandlers\BaseHandler.cs" />
+    <Compile Include="ReceiverHandlers\MessageHandler.cs" />
+    <Compile Include="ReceiverHandlers\NotificationOpenHandler.cs" />
+    <Compile Include="ReceiverHandlers\NotificationReceivedHandler.cs" />
+    <Compile Include="ReceiverHandlers\ReceiverHandler.cs" />
+    <Compile Include="ReceiverHandlers\RegisrationHandler.cs" />
     <Compile Include="Resources\Resource.Designer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Services\JPushNotification.cs" />
