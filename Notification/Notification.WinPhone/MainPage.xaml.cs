@@ -7,6 +7,7 @@ using System.Windows.Controls;
 using System.Windows.Navigation;
 using Microsoft.Phone.Controls;
 using Microsoft.Phone.Shell;
+using Caliburn.Micro;
 
 namespace Notification.WinPhone {
     public partial class MainPage : global::Xamarin.Forms.Platform.WinPhone.FormsApplicationPage {
@@ -15,7 +16,7 @@ namespace Notification.WinPhone {
             SupportedOrientations = SupportedPageOrientation.PortraitOrLandscape;
 
             global::Xamarin.Forms.Forms.Init();
-            LoadApplication(new Notification.App());
+            LoadApplication(new Notification.App(IoC.Get<PhoneContainer>()));
         }
     }
 }

@@ -9,6 +9,7 @@ using Android.OS;
 using Notification.Droid.Services;
 using CN.Jpush.Android.Api;
 using Xamarin.Forms.Platform.Android;
+using Caliburn.Micro;
 
 namespace Notification.Droid {
 
@@ -22,7 +23,7 @@ namespace Notification.Droid {
             FormsAppCompatActivity.ToolbarResource = Resource.Layout.toolbar;
             FormsAppCompatActivity.TabLayoutResource = Resource.Layout.tabs;
 
-            LoadApplication(new App());
+            LoadApplication(new App(IoC.Get<SimpleContainer>()));
 
             JPushInterface.SetDebugMode(true);
             JPushInterface.Init(this);
