@@ -1,0 +1,27 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="Notification.Views.MasterView"
+             Title="Colors"
+             >
+
+  <StackLayout>
+    <Button Command="{Binding TestCmd}" Text="TTT" />
+    <Label Text="{Binding Colors.Count}" />
+    <ListView ItemsSource="{Binding Colors}">
+      <ListView.ItemTemplate>
+        <DataTemplate>
+          <ViewCell>
+            <ViewCell.View>
+              <StackLayout Orientation="Horizontal">
+                <BoxView WidthRequest="20" HeightRequest="20" BackgroundColor="{Binding Value}" VerticalOptions="Center" />
+                <Label Text="{Binding Key}" VerticalTextAlignment="Center" />
+              </StackLayout>
+            </ViewCell.View>
+          </ViewCell>
+        </DataTemplate>
+      </ListView.ItemTemplate>
+    </ListView>
+  </StackLayout>
+
+</ContentPage>

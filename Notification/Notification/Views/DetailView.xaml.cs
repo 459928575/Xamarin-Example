@@ -7,8 +7,8 @@ using System.Threading.Tasks;
 using Xamarin.Forms;
 
 namespace Notification.Views {
-    public partial class HomeView : MasterDetailPage {
-        public HomeView() {
+    public partial class DetailView : ContentPage {
+        public DetailView() {
             InitializeComponent();
         }
     }

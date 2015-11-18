@@ -18,7 +18,8 @@ namespace Notification {
             this.Container = container;
 
             this.Container
-                .Singleton<HomeViewModel>();
+                .Singleton<HomeViewModel>()
+                .Singleton<MasterViewModel>();
 
             this.DisplayRootView<HomeView>();
         }
