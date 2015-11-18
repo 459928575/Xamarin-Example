@@ -6,8 +6,6 @@
              >
 
   <StackLayout>
-    <Button Command="{Binding TestCmd}" Text="TTT" />
-    <Label Text="{Binding Colors.Count}" />
     <ListView ItemsSource="{Binding Colors}">
       <ListView.ItemTemplate>
         <DataTemplate>

@@ -32,13 +32,25 @@ namespace Notification.UWP {
             _container = new WinRTContainer();
             _container.RegisterWinRTServices();
 
+            //_container.PerRequest<ShellViewModel>();
+
             _eventAggregator = _container.GetInstance<IEventAggregator>();
+        }
+
+
+        protected override IEnumerable<Assembly> SelectAssemblies() {
+            return new[]
+            {
+                GetType().GetTypeInfo().Assembly,
+                typeof (Notification.App).GetTypeInfo().Assembly
+            };
         }
 
         protected override void OnLaunched(LaunchActivatedEventArgs args) {
             Xamarin.Forms.Forms.Init(args); // requires the `e` parameter
 
-            this.DisplayRootView(typeof(MainPage));
+            //this.DisplayRootViewFor<ShellViewModel>();
+            this.DisplayRootView<MainPage>();
             if (args.PreviousExecutionState == ApplicationExecutionState.Terminated) {
                 //_eventAggregator.PublishOnUIThread(new ResumeStateMessage());
             }
