@@ -21,6 +21,11 @@ namespace Notification {
                 .Singleton<HomeViewModel>()
                 .Singleton<MasterViewModel>();
 
+            var f = ViewLocator.LocateTypeForModelType;
+            ViewLocator.LocateTypeForModelType = (t, b, c) => {
+                return f(t, b, c ?? Device.OS) ?? f(t, b, c);
+            };
+
             this.DisplayRootView<HomeView>();
         }
 
