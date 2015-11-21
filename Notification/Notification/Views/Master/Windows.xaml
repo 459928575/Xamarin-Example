@@ -21,12 +21,12 @@
 
                 <BoxView WidthRequest="20"
                          HeightRequest="20" 
-                         BackgroundColor="{Binding Value}" 
+                         BackgroundColor="{Binding Color}" 
                          VerticalOptions="Center"
                          HorizontalOptions="Center"
                          Grid.Row="1" Grid.Column="0"
                          />
-                <Label Text="{Binding Key}" VerticalTextAlignment="Center" 
+                <Label Text="{Binding Name}" VerticalTextAlignment="Center" 
                        Grid.Row="1" Grid.Column="1"
                        />
 

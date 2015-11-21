@@ -12,8 +12,8 @@
           <ViewCell>
             <ViewCell.View>
               <StackLayout Orientation="Horizontal">
-                <BoxView WidthRequest="20" HeightRequest="20" BackgroundColor="{Binding Value}" VerticalOptions="Center" />
-                <Label Text="{Binding Key}" VerticalTextAlignment="Center" />
+                <BoxView WidthRequest="20" HeightRequest="20" BackgroundColor="{Binding Color}" VerticalOptions="Center" />
+                <Label Text="{Binding Name}" VerticalTextAlignment="Center" />
               </StackLayout>
             </ViewCell.View>
           </ViewCell>
