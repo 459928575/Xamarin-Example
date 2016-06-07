@@ -11,8 +11,8 @@
     <AssemblyName>Notification.UWP</AssemblyName>
     <DefaultLanguage>zh-CN</DefaultLanguage>
     <TargetPlatformIdentifier>UAP</TargetPlatformIdentifier>
-    <TargetPlatformVersion>10.0.10240.0</TargetPlatformVersion>
-    <TargetPlatformMinVersion>10.0.10240.0</TargetPlatformMinVersion>
+    <TargetPlatformVersion>10.0.10586.0</TargetPlatformVersion>
+    <TargetPlatformMinVersion>10.0.10586.0</TargetPlatformMinVersion>
     <MinimumVisualStudioVersion>14</MinimumVisualStudioVersion>
     <EnableDotNetNativeCompatibleProfile>true</EnableDotNetNativeCompatibleProfile>
     <FileAlignment>512</FileAlignment>
@@ -141,11 +141,6 @@
       <Project>{9ab53fdd-2740-4166-af54-d7b181944666}</Project>
       <Name>Notification</Name>
     </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <Reference Include="Caliburn.Micro.Platform.Xamarin.Forms">
-      <HintPath>..\packages\Caliburn.Micro.Xamarin.Forms.3.0.0-beta1\lib\portable-net45+win8+wp8+wpa81+MonoAndroid10+Xamarin.iOS10+MonoTouch10\Caliburn.Micro.Platform.Xamarin.Forms.dll</HintPath>
-    </Reference>
   </ItemGroup>
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '14.0' ">
     <VisualStudioVersion>14.0</VisualStudioVersion>
